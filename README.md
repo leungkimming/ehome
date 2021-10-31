@@ -59,7 +59,7 @@ Plug in ESP32, and the cover assembly with both LED display and SD module onto t
 Drill holes on each side of the plastic box for the two 3.5mm sockets. Again, you need very careful alignment. <br />
 Close the plastic box and fasten the 3.5mm socket nuts.
 
-![Assembly](/doc/IMG_5471.jpg)
+![Assembly](/doc/IMG_5471.JPG)
 **Warning!** Employ a licensed eletrical technician to plug in the SCT-13-060 to your home's main supply.
 
 ![eHome](/doc/IMG_5466.jpg)
