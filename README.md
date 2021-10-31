@@ -1,5 +1,5 @@
 # eHome
-*Monitor Home electricity consumption using CT & ESP32*
+*Monitor Home electricity consumption using SCT-013, Emonlib, ESP32 & LED display*
 ### Author: Michael Leung from Hong Kong
 
 ## Intro
