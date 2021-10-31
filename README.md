@@ -94,10 +94,10 @@ emon1.current(ESP32 ADC pin, Current Constant);
 ```
 Based on the calibration theory on learn.openenergymonitor.org, If you use a current transformer with a built-in burden (SCT-013-060 is one of these), then
 ```
-current constant = max primary current ÷ (max secondary current (I) * burden reisiter (R))
-current constant = max primary current ÷ (max voltage across the burden reisiter)
+current constant = max primary current ÷ (max secondary current (I) * burden resistor (R))
+current constant = max primary current ÷ (max voltage across the burden resistor)
 ```
-For SCT-013-060, we know "max primary current" = 60 and "max voltage across the burden reisiter" = 1V. Hence, 
+For SCT-013-060, we know "max primary current" = 60 and "max voltage across the burden resistor" = 1V. Hence, 
 ```
 current constant = 60 ÷ (1) = 60
 emon1.current(ESP32 ADC pin, 60);
