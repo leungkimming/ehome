@@ -103,7 +103,7 @@ current constant = 60 ÷ (1) = 60
 emon1.current(ESP32 ADC pin, 60);
 ```
 ### 6. Sampling cycle Calibration http://xxx.xxx.x.xxx/cycle?value=5394
-Our electricity supply is in form of Alternating Current (AC), which is the number of cycles per second of sine waves in Hertz (Hz). Best sampling rates are complete multiple of complete sin wave. The sampling-rate-of-emonlib reference above found in his setup that:
+Our electricity supply is in form of Alternating Current (AC), which is the number of cycles per second of sine waves in Hertz (Hz). Best sampling rates are multiple of complete sin waves. The sampling-rate-of-emonlib reference above found in his setup that:
 ```
 calcIrms( ) will have approx 5588 current samples per second
 1 cycle of mains:
