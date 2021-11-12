@@ -1,5 +1,5 @@
 # eHome
-*Monitor Home electricity consumption using SCT-013, Emonlib, ESP32, LED display, SD card & wifi services*
+*Monitor Home electricity consumption using SCT-013, Emonlib, ESP32, LED display, SD card, buzzer alarm & wifi services*
 ### Author: Michael Leung from Hong Kong
 
 ## Intro
