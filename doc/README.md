@@ -24,7 +24,7 @@ This device provides the following functions:
 * Current Transformer: https://www.ebay.com/itm/174480353810
 * ESP32: https://www.amazon.com/DORHEA-Bluetooth-Internet-Development-Functional/dp/B08ND91YB8?th=1
 * SD card module: https://www.ebay.com/itm/293683210627
-* LED display: https://www.amazon.com/diymore-Display-7-Segment-4-Digit-Digital/dp/B078J2BRRB
+* LED display: https://www.amazon.com/TM1637-7-Segment-Digital-Display-Arduino/dp/B084TJGMCK/ref=sr_1_13?keywords=diymore+tm1637+%220.56%22&qid=1636866246&sr=8-13
 * 3.5mm socket x 2
 * buzzer
 * 10k resistor x 2
