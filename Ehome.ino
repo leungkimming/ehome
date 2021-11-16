@@ -24,8 +24,8 @@
 // 1sec=17982, 5 cycles @ 50 Hz =100ms=1798 18cycle=300ms=5394 old=1480,1676
 
 const int   led = LED_BUILTIN;
-const char* ssid     = "feifei";
-const char* password = "87080183";
+const char* ssid     = "xxxxxxxx";
+const char* password = "yyyyyyyyy";
 const char* ntpServer = "hk.pool.ntp.org";
 const long  gmtOffset_sec = 28800;
 const int   daylightOffset_sec = 0;
