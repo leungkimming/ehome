@@ -10,6 +10,7 @@
 #include "Preferences.h"
 //#include "soc/soc.h"
 //#include "soc/rtc_cntl_reg.h"
+#include "SPIFFS.h"
 
 #define TM1637_CLK 15
 #define TM1637_DIO 16
@@ -23,8 +24,8 @@
 // 1sec=17982, 5 cycles @ 50 Hz =100ms=1798 18cycle=300ms=5394 old=1480,1676
 
 const int   led = LED_BUILTIN;
-const char* ssid     = "xxxxxxxx";
-const char* password = "yyyyyyyy";
+const char* ssid     = "feifei";
+const char* password = "87080183";
 const char* ntpServer = "hk.pool.ntp.org";
 const long  gmtOffset_sec = 28800;
 const int   daylightOffset_sec = 0;
@@ -136,6 +137,13 @@ void setup()
   if (!SD.begin(SD_CS_Pin)) {
     Serial.println("SD failed");
   }
+  if (!SPIFFS.begin(true)) {
+      Serial.println("An Error has occurred while mounting SPIFFS");
+      return;
+  }
+  File root = SPIFFS.open("/");
+  File file = root.openNextFile();
+  Serial.println(file.name());
   digitalWrite(led, true);
 
   cycle_cnt = -10; // let stablize
@@ -152,14 +160,19 @@ void setup()
   });
   
   server.on("/history", HTTP_GET, [](AsyncWebServerRequest *request){
-    Webmessage = "";
-    historyAction = SD.open("/history.csv", FILE_READ);
-    while (historyAction.available()) {
-      Webmessage += historyAction.readStringUntil('\n');
-      //Serial.println(Webmessage); //Printing for debugging purpose         
+    File sourceFile = SD.open("/history.csv");
+    File destFile = SPIFFS.open("/history.csv", FILE_WRITE);
+//  Serial.println(sourceFile);
+//  Serial.println(destFile);
+    static uint8_t buf[4096];
+    size_t n;
+    while ( (n = sourceFile.read( buf, sizeof(buf))) > 0 ) {
+      destFile.write( buf, n );
+//    Serial.print(".");
     }
-    historyAction.close();
-    request->send(200, "text/plain", Webmessage);
+    destFile.close();
+    sourceFile.close();
+    request->send(SPIFFS, "/history.csv", "text/plain");
   });
 
   server.on("/clear", HTTP_GET, [](AsyncWebServerRequest *request){
