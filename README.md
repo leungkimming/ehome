@@ -1,7 +1,7 @@
 # eHome
 *Monitor Home electricity consumption using SCT-013, Emonlib, ESP32, LED display, SD card, buzzer alarm & wifi services*
 ### Author: Michael Leung from Hong Kong
-
+My electrictal technician told me that the wiring in my house is too old and cannot deliver even full single phase power. He warned me to monitor my house's consumption and keep it under 30 Ampere. This is the main reason for this project.
 ## Intro
 ![eHome](/doc/IMG_5466.jpg)
 
