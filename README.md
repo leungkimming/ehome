@@ -51,7 +51,8 @@ Prepare LED display on the cover top. Don't mount and drill holes for the 4 pins
 
 ![Assembly](/doc/IMG_5460.jpg)
 Solder the top side, with resistors, capacitors, 3.5mm socket for SCT-13-060, 4 pins sockets for LED display and 6 pins socket for SD card module. I used the 0.1uf capacitor to mount the 3.5mm socket on the board because I want to cancel noise from the outset.<br />
-Mount the SD card module on the cover bottom. Need careful alignment with the 6 pins socket. Mount the LED display on cover top with holes for the 4 pins. Again, need careful aligment with the 4 pins socket.
+Mount the SD card module on the cover bottom. Need careful alignment with the 6 pins socket. Mount the LED display on cover top with holes for the 4 pins. Again, need careful aligment with the 4 pins socket.<br />
+Format the micro SD in FAT32 format and create a file "history.csv" with one line "Date_Time,Amp"
 
 ![Assembly](/doc/IMG_5462.jpg)
 Plug in ESP32, and the cover assembly with both LED display and SD module onto the respective sockets.
