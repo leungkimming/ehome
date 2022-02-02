@@ -11,6 +11,7 @@
 //#include "soc/soc.h"
 //#include "soc/rtc_cntl_reg.h"
 #include "SPIFFS.h"
+#include "esp_task_wdt.h"
 
 #define TM1637_CLK 15
 #define TM1637_DIO 16
@@ -21,11 +22,12 @@
 #define SD_SCK_Pin 18
 #define buzzer 26
 #define cycle_factory 1480
+#define max_sd_file_size 86300
 // 1sec=17982, 5 cycles @ 50 Hz =100ms=1798 18cycle=300ms=5394 old=1480,1676
 
 const int   led = LED_BUILTIN;
-const char* ssid     = "xxxxxxxx";
-const char* password = "yyyyyyyyy";
+const char* ssid     = "feifei";
+const char* password = "87080183";
 const char* ntpServer = "hk.pool.ntp.org";
 const long  gmtOffset_sec = 28800;
 const int   daylightOffset_sec = 0;
@@ -42,6 +44,7 @@ TM1637Display display(TM1637_CLK, TM1637_DIO);
 AsyncWebServer server(80);
 File history;
 File historyAction;
+File root;
 
 volatile byte state = LOW;
 volatile int cycle_cnt = 0;
@@ -58,6 +61,7 @@ int alert;
 int cycle;
 int reconnect_cnt = 0;
 int start;
+String currentHistory;
 
 void IRAM_ATTR onTimer() {
   state = !state;
@@ -92,6 +96,77 @@ void initwifi() {
       }
     }
   }
+}
+
+String latestHistory()
+{
+  String fname;
+  String suffix;
+  String fnameMax = "/history.csv";
+  int idxMax = 0;
+  
+  root = SD.open("/");
+  while (true) {
+    File entry =  root.openNextFile();
+    if (! entry) {
+      break;
+    }
+//    Serial.println(entry.name());
+    fname = entry.name();
+    if (fname.startsWith("/history")) {
+      suffix = fname.substring(8);
+      if (suffix != "") {
+        if (suffix.toInt() > idxMax) {
+          idxMax = suffix.toInt();
+          fnameMax = fname;
+        }
+      }
+    }
+    entry.close();
+  }
+  root.close();
+  return fnameMax;
+}
+
+void newHistory()
+{
+  String fname;
+  int count = 0;
+
+  File currentCopy = SD.open(currentHistory);
+  if (currentCopy.size() <= max_sd_file_size) {
+    currentCopy.close();
+//    Serial.println("history size not exceed");
+    return;
+  }
+  Serial.println("history size exceeded");
+  
+  root = SD.open("/");
+  while (true) {
+    File entry =  root.openNextFile();
+    if (! entry) {
+      break;
+    }
+//    Serial.println(entry.name());
+    fname = entry.name();
+    if (fname.startsWith("/history")) {
+      count++;
+    }
+    entry.close();
+  }
+  root.close();
+   
+  fname = "/history";
+  fname += String(count);
+  fname += ".csv";
+  currentHistory = fname;
+  historyAction = SD.open(fname, FILE_WRITE);
+  if (historyAction) {
+    historyAction.println("Date_Time,Amp");
+    historyAction.close();
+  }
+  Serial.print("New History = ");
+  Serial.println(fname);
 }
 
 void setup()
@@ -144,6 +219,9 @@ void setup()
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
   Serial.println(file.name());
+  currentHistory = latestHistory();
+  Serial.print("Historyfile = ");
+  Serial.println(currentHistory);
   digitalWrite(led, true);
 
   cycle_cnt = -10; // let stablize
@@ -160,32 +238,54 @@ void setup()
   });
   
   server.on("/history", HTTP_GET, [](AsyncWebServerRequest *request){
-    File sourceFile = SD.open("/history.csv");
-    File destFile = SPIFFS.open("/history.csv", FILE_WRITE);
-//  Serial.println(sourceFile);
-//  Serial.println(destFile);
-    static uint8_t buf[4096];
-    size_t n;
-    while ( (n = sourceFile.read( buf, sizeof(buf))) > 0 ) {
-      destFile.write( buf, n );
-//    Serial.print(".");
+    File sourceFile;
+    if(request->hasParam("value")) {
+      String reqfile = request->getParam("value")->value();
+      Serial.println(reqfile);
+      sourceFile = SD.open(reqfile);
+      if (!sourceFile) {   
+        Webmessage = reqfile + " not found";
+        request->send(200, "text/plain", Webmessage);
+      }
+    } else {
+      sourceFile = SD.open(currentHistory);    
     }
-    destFile.close();
-    sourceFile.close();
-    request->send(SPIFFS, "/history.csv", "text/plain");
+
+    if (sourceFile) {
+      File destFile = SPIFFS.open("/history.csv", FILE_WRITE);
+      Serial.println(sourceFile);
+      Serial.println(sourceFile.size());
+      static uint8_t buf[4096];
+      size_t n;
+      while ( (n = sourceFile.read( buf, sizeof(buf))) > 0 ) {
+        destFile.write( buf, n );
+//        Serial.print(".");
+        esp_task_wdt_reset();
+      }
+//      Serial.print("+");
+      destFile.close();
+      sourceFile.close();
+      request->send(SPIFFS, "/history.csv", "text/plain");
+    }
   });
 
-  server.on("/clear", HTTP_GET, [](AsyncWebServerRequest *request){
-    historyAction = SD.open("/history.csv", FILE_WRITE);
-    if (historyAction) {
-      historyAction.println("Date_Time,Amp");
-      historyAction.close();
-      Webmessage = "History Cleared";
-    } else {
-      Serial.println("SD error");
-      Webmessage = "SD clear error";        
+  server.on("/list", HTTP_GET, [](AsyncWebServerRequest *request){
+    Webmessage = "List of History Files: \n";
+    File root = SD.open("/");
+    while (true) {
+      File entry =  root.openNextFile();
+      if (! entry) {
+        break;
+      }
+//      Serial.println(entry.name());
+      String fname = entry.name();
+      if (fname.startsWith("/history")) {
+        Webmessage += fname;
+        Webmessage += '\n';
+      }
+      entry.close();
     }
-
+    root.close();
     request->send(200, "text/plain", Webmessage);
   });
 
@@ -281,7 +381,8 @@ void loop()
     display.clear();
     showIrms(last_Irms);
     getLocalTime(&timeinfo);
-    history = SD.open("/history.csv", FILE_APPEND);
+    newHistory();
+    history = SD.open(currentHistory, FILE_APPEND);
     if (history) {
       history.print(&timeinfo, "%Y/%m/%d %H:%M:%S");
       history.print(",");
