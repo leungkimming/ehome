@@ -76,16 +76,21 @@ You have to hard code
 ```
 2021/10/31 00:05:52 - 1.55A
 ```
-
-### 2. History http://xxx.xxx.x.xxx/history
+### 2. List all History files http://xxx.xxx.x.xxx/list
+```
+List of History Files:
+/history.csv
+/history1.csv
+/history2.csv
+```
+### 3. Current History file http://xxx.xxx.x.xxx/history
+###    Previous History files http://xxx.xxx.x.xxx/history?value=/history1.csv
 ```
 Date_Time,Amp
 2021/10/28 14:17:14,2.76
 2021/10/28 14:21:34,0.63
 2021/10/28 19:51:35,7.74
 ```
-### 3. Clear all History records http://xxx.xxx.x.xxx/clear
-
 ### 4. Set alert level http://xxx.xxx.x.xxx/alert?value=3300
 3300 with assumed 2 decimal point = 33.00A
 
