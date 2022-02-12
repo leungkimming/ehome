@@ -133,7 +133,8 @@ output:
 Cycle=300
 ```
 
-
+For the purposes of getting google to crawl the wiki, here's a link to the (not for humans) crawlable wiki 
+https://github-wiki-see.page/m/leungkimming/ehome/wiki
 
 
 
